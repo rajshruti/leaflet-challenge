@@ -15,7 +15,7 @@ L.tileLayer("https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={
 // Import earthquake dataset
 var link = "static/data/all_week.geojson";
 
-// Function that will determine the color of a neighborhood based on the borough it belongs to
+// Function that will determine the color of the markers
 function marker(magnitude) {
 
   switch (magnitude) {
@@ -36,22 +36,22 @@ function marker(magnitude) {
   default:
     return "#05FAC6";
   }
-}
+};
 
-// Grabbing our GeoJSON data..
+// Grabbing our GeoJSON data.
 d3.json(link, function(data) {
   // Creating a geoJSON layer with the retrieved data
   L.geoJson(data, {
-    // Style each feature (in this case a neighborhood)
+    // Style each feature
     style: function(feature) {
       return {
         color: "white",
-        // Call the chooseColor function to decide which color to color our neighborhood (color based on borough)
+        // Call the chooseColor function to decide which color to color the markers
         fillColor: marker(properties.mag),
         fillOpacity: 1.0,
         weight: 1.5,
 		// Adjust radius
-        radius: properties.mag * 10000
+        radius: properties.mag * 10000 // just for testing; to be adjusted later
       };
     },
     // Called on each feature
@@ -71,10 +71,6 @@ d3.json(link, function(data) {
           layer.setStyle({
             fillOpacity: 0.5
           });
-        },
-        // When a feature (neighborhood) is clicked, it is enlarged to fit the screen
-        click: function(event) {
-          map.fitBounds(event.target.getBounds());
         }
       });
       // Giving each feature a pop-up with information pertinent to it
