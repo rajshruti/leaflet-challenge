@@ -1,6 +1,8 @@
 // Import earthquake dataset
 var link = "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_week.geojson";
 
+var tectonicPlatesLink= "https://raw.githubusercontent.com/fraxen/tectonicplates/master/GeoJSON/PB2002_boundaries.json";
+
 d3.json(link, function(data){
 
   // Define different map layers
@@ -53,6 +55,19 @@ function markerColor(magnitude) {
     }
 };
 
+var tectonicPlates = new L.LayerGroup();
+
+d3.json(tectonicPlatesLink, function(data) {
+    L.geoJSON(data.features, {
+        style: function (data) {
+            return {
+                weight: 2,
+                color: '#FA7A1C'
+            }
+        },
+    }).addTo(tectonicPlates);
+})
+
 var earthquakes=L.geoJSON(data, {
     pointToLayer: function (feature, latlng) {
         return L.circleMarker(latlng, { radius: markerSize(feature.properties.mag) })
@@ -79,12 +94,13 @@ var myMap = L.map("map", {
     37.09, -95.71
     ],
     zoom: 4,
-    layers: [streetmap,earthquakes]
+    layers: [streetmap,earthquakes,tectonicPlates]
   });
 
 // Create overlay object to hold our overlay layer
 var overlayMaps = {
-  Earthquakes: earthquakes
+  "Earthquakes": earthquakes,
+  "Tectonic Plates": tectonicPlates
   };
   
 // Add the layer control to the map
